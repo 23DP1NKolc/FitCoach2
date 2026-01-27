@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background-color: #f9f9f9;
+}
+
+section {
+  padding: 24px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+}
