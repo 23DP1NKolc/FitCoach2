@@ -7,26 +7,20 @@
             <v-icon icon="mdi-dumbbell" />
           </v-avatar>
 
-          <span class="brand" @click="$router.push('/')">FitCoach - treneru meklēšana</span>
+          <span class="brand" @click="$router.push('/')">FitCoach</span>
 
-        
-        </div>
-
-        <div class="d-flex align-center ga-2">
           <v-btn variant="text" @click="$router.push('/treneri')">
             Treneri
           </v-btn>
+        </div>
 
+        <div class="d-flex align-center ga-2">
           <v-btn
             :icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
             variant="tonal"
             color="primary"
             @click="toggleTheme"
           />
-
-          <v-btn color="primary" variant="flat" class="cta" @click="$router.push('/treneri')">
-            Sākt
-          </v-btn>
         </div>
       </v-container>
     </v-app-bar>
@@ -68,17 +62,8 @@ function toggleTheme () {
   cursor: pointer;
 }
 
-.cta {
-  border-radius: 14px;
-  font-weight: 700;
-}
-
 .footer {
   background: color-mix(in srgb, var(--v-theme-surface) 92%, transparent);
   border-top: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 10%, transparent);
-}
-
-.muted {
-  opacity: 0.7;
 }
 </style>

@@ -6,9 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Trainer extends Model
 {
-    protected $fillable = [
-        'name',
-        'sport',
-        'description',
-    ];
+    protected $fillable = ['name', 'sport', 'description', 'photo_url'];
 }

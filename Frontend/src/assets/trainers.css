@@ -1,0 +1,35 @@
+/* Frontend/src/assets/trainers.css */
+
+.trainersPage .filtersCard {
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 10%, transparent);
+  background: color-mix(in srgb, var(--v-theme-surface) 94%, transparent);
+}
+
+.trainersPage .trainerCard {
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 10%, transparent);
+  background: color-mix(in srgb, var(--v-theme-surface) 92%, transparent);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.trainersPage .trainerCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+.trainersPage .trainerImg {
+  border-bottom: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 10%, transparent);
+}
+
+.trainersPage .imgOverlay {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+}
+
+.trainersPage .trainerBtn {
+  border-radius: 14px;
+  font-weight: 900;
+}
