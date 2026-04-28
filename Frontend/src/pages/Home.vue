@@ -16,7 +16,7 @@
               </h1>
 
               <p class="subtitle">
-                Izvēlies sporta veidu, apskati trenera profilu un sāc trenēties. Dati nāk no Laravel API un glabājas SQLite datubāzē.
+                Izvēlies sporta veidu, apskati trenera profilu un sāc trenēties. 
               </p>
 
               <div class="searchWrap mt-7">
@@ -58,20 +58,7 @@
                 </v-btn>
               </div>
 
-              <div class="stats mt-9">
-                <div class="stat">
-                  <div class="statNum">Mūsdienīgi</div>
-                  <div class="statLbl">Vue + Vuetify dizains</div>
-                </div>
-                <div class="stat">
-                  <div class="statNum">API</div>
-                  <div class="statLbl">Laravel REST</div>
-                </div>
-                <div class="stat">
-                  <div class="statNum">DB</div>
-                  <div class="statLbl">SQLite + migrācijas</div>
-                </div>
-              </div>
+             
             </v-col>
 
             <v-col cols="12" md="5" class="d-flex justify-center">

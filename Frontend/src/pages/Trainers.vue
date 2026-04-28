@@ -1,8 +1,5 @@
 
 <template>
-<v-alert type="success" variant="tonal" class="mb-4">
-  Tu esi Trainers.vue failā. Skaits: {{ Array.isArray(trainers) ? trainers.length : 'nav masīvs' }}
-</v-alert>
   <v-container class="py-8 trainersPage">
     <!-- Header -->
     <div class="d-flex align-center justify-space-between flex-wrap ga-3 mb-6">
