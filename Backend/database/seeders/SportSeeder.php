@@ -9,10 +9,10 @@ class SportSeeder extends Seeder
 {
     public function run(): void
     {
-        $items = ['Fitness','Joga','Dejas','Kardio','Pilates','Bokss'];
+        $sports = ['Fitness', 'Joga', 'Dejas', 'Kardio', 'Pilates', 'Bokss'];
 
-        foreach ($items as $name) {
-            Sport::updateOrCreate(['name' => $name]);
+        foreach ($sports as $name) {
+            Sport::firstOrCreate(['name' => $name]);
         }
     }
 }

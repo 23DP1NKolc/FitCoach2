@@ -1,93 +1,109 @@
 <template>
-  <v-container class="py-10">
-    <v-row justify="center">
-      <v-col cols="12" sm="8" md="5" lg="4">
-        <v-card class="pa-6 rounded-xl" elevation="0" style="border:1px solid rgba(0,0,0,.08)">
-          <div class="text-h5 font-weight-black mb-6 text-center">Pieslēgties</div>
+  <v-container class="py-10" style="max-width: 520px;">
+    <v-card class="pa-8 rounded-xl" elevation="0">
+      <h1 class="text-h5 font-weight-black text-center mb-6">Pieslēgties</h1>
 
-          <v-alert
-            v-if="err"
-            type="error"
-            variant="tonal"
-            class="rounded-xl mb-4"
-            :text="err"
-          />
+      <v-alert
+        v-if="err"
+        type="error"
+        variant="tonal"
+        class="rounded-xl mb-4"
+        :text="err"
+      />
 
-          <v-text-field
-            v-model="form.email"
-            label="E-pasts"
-            prepend-inner-icon="mdi-email"
-            variant="solo"
-            density="comfortable"
-            autocomplete="email"
-          />
+      <v-form @submit.prevent="login">
+        <v-text-field
+          v-model="form.email"
+          label="E-pasts"
+          prepend-inner-icon="mdi-email"
+          variant="solo"
+          density="comfortable"
+          autocomplete="email"
+          :disabled="loading"
+          class="mb-3"
+          required
+        />
 
-          <v-text-field
-            v-model="form.password"
-            label="Parole"
-            prepend-inner-icon="mdi-lock"
-            variant="solo"
-            density="comfortable"
-            type="password"
-            autocomplete="current-password"
-            class="mt-2"
-          />
+        <v-text-field
+          v-model="form.password"
+          label="Parole"
+          prepend-inner-icon="mdi-lock"
+          variant="solo"
+          density="comfortable"
+          autocomplete="current-password"
+          :type="show ? 'text' : 'password'"
+          :append-inner-icon="show ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="show = !show"
+          :disabled="loading"
+          class="mb-4"
+          required
+        />
 
-          <v-btn
-            color="primary"
-            variant="flat"
-            block
-            class="mt-4"
-            :loading="loading"
-            @click="login"
-          >
-            Ienākt
-          </v-btn>
+        <v-btn
+          type="submit"
+          color="primary"
+          size="large"
+          block
+          :loading="loading"
+          :disabled="loading"
+          class="rounded-lg font-weight-black"
+        >
+          Ienākt
+        </v-btn>
 
-          <div class="text-body-2 mt-4 text-center" style="opacity:.75">
-            Nav konta?
-            <a href="" @click.prevent="router.push('/register')">Reģistrēties</a>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+        <div class="text-body-2 mt-4 text-center" style="opacity:.8;">
+          Nav konta?
+          <a href="#" @click.prevent="router.push('/register')">Reģistrēties</a>
+        </div>
+      </v-form>
+    </v-card>
   </v-container>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import api from '../services/api'
-import { setAuth } from '../services/auth'
+import { setAuth } from '../services/auth' // ja tev ir auth.js ar setAuth()
 
 const router = useRouter()
+const route = useRoute()
 
 const loading = ref(false)
 const err = ref('')
+const show = ref(false)
 
 const form = ref({
   email: '',
   password: '',
 })
 
-async function login() {
-  loading.value = true
+async function login () {
   err.value = ''
 
+  // elementāra pārbaude, lai nesūtītu tukšus
+  if (!form.value.email.trim() || !form.value.password.trim()) {
+    err.value = 'Ievadi e-pastu un paroli.'
+    return
+  }
+
+  loading.value = true
   try {
     const { data } = await api.post('/auth/login', {
-      email: form.value.email,
+      email: form.value.email.trim(),
       password: form.value.password,
     })
 
-    // saglabā token + user un uzreiz atjauno App.vue
+    // saglabā token + user un atjauno AppBar uzreiz
     setAuth(data.token, data.user)
-    const redirect = router.currentRoute.value.query.redirect
-router.push(redirect ? String(redirect) : (data.user?.role === 'admin' ? '/admin' : '/'))
 
-    router.push(data.user?.role === 'admin' ? '/admin' : '/')
+    // ja nāca redirect no query (?redirect=/treneri)
+    const redirect = route.query.redirect
+    router.push(typeof redirect === 'string' ? redirect : (data.user?.role === 'admin' ? '/admin' : '/'))
   } catch (e) {
-    err.value = e?.response?.data?.message || 'Nepareizs e-pasts vai parole.'
+    err.value =
+      e?.response?.data?.message ||
+      'Nepareizs e-pasts vai parole.'
   } finally {
     loading.value = false
   }

@@ -2,24 +2,15 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://fitcoach.infinityfreeapp.com/',
-  headers: {
-    Accept: 'application/json',
-  },
+  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
+  headers: { Accept: 'application/json' },
 })
 
-
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => Promise.reject(error)
-)
-
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
 
 api.interceptors.response.use(
   (res) => res,
