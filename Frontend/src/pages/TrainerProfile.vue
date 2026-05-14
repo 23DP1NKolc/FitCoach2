@@ -1,182 +1,150 @@
 <template>
-  <v-container class="py-10">
-    <v-breadcrumbs :items="crumbs" class="mb-6" />
+  <v-container class="py-8">
+    <!-- Breadcrumbs -->
+    <v-breadcrumbs :items="crumbs" class="mb-4" />
 
     <!-- Loading -->
-    <v-skeleton-loader
-      v-if="loading"
-      type="card, article, actions"
-      class="rounded-xl"
-    />
+    <v-row v-if="loading">
+      <v-col cols="12">
+        <v-skeleton-loader type="card, article, actions" />
+      </v-col>
+    </v-row>
 
     <!-- Error -->
     <v-alert
       v-else-if="error"
       type="error"
       variant="tonal"
-      title="Neizdevās ielādēt profilu"
-      :text="error"
       class="rounded-xl"
+      :text="error"
     />
 
-    <!-- Content -->
-    <v-card v-else class="profileCard" elevation="0">
-      <div class="bg" />
+    <!-- Profile -->
+    <v-row v-else>
+      <v-col cols="12" md="8">
+        <v-card class="profileCard" elevation="0">
+          <div class="bg"></div>
 
-      <v-row class="pa-6 pa-md-10" align="center">
-        <!-- Left -->
-        <v-col cols="12" md="8">
-          <div class="d-flex align-center ga-4">
-            <v-avatar size="72" color="primary" class="shadow">
-              <v-icon icon="mdi-account" size="32" />
-            </v-avatar>
+          <v-card-text class="pa-6">
+            <div class="d-flex align-center ga-4 flex-wrap">
+              <v-avatar size="64" color="primary">
+                <v-icon icon="mdi-account" />
+              </v-avatar>
 
-            <div>
-              <h1 class="text-h4 font-weight-black mb-1">
-                {{ trainer.name }}
-              </h1>
+              <div>
+                <div class="text-h4 font-weight-black">{{ trainer?.name }}</div>
 
-              <div class="d-flex flex-wrap ga-2">
-                <v-chip color="secondary" variant="tonal">
-                  {{ trainer.sport }}
-                </v-chip>
-                <v-chip color="primary" variant="tonal">
-                  Pieejams tiešsaistē
-                </v-chip>
-                <v-chip color="accent" variant="tonal">
-                  4.9 (demo)
-                </v-chip>
+                <div class="d-flex align-center ga-2 mt-1 flex-wrap">
+                  <v-chip color="secondary" variant="tonal" size="small">
+                    {{ trainer?.sport || 'Sports' }}
+                  </v-chip>
+                  <v-chip color="primary" variant="tonal" size="small">
+                    Pieejams tiešsaistē
+                  </v-chip>
+                  <v-chip color="accent" variant="tonal" size="small">
+                    4.9 (demo)
+                  </v-chip>
+                </div>
               </div>
             </div>
+
+            <v-row class="mt-6" align="start">
+              <v-col cols="12" md="7">
+                <div class="text-body-1" style="opacity:.9">
+                  {{ trainer?.description }}
+                </div>
+
+                <div class="d-flex ga-3 mt-5 flex-wrap">
+                  <v-btn color="primary" variant="flat" class="btn" @click="contact">
+                    <v-icon icon="mdi-message" start />
+                    Sazināties
+                  </v-btn>
+
+                  <v-btn color="secondary" variant="tonal" class="btn" @click="openBooking">
+                    <v-icon icon="mdi-calendar" start />
+                    Rezervēt nodarbību
+                  </v-btn>
+
+                  <v-btn variant="text" @click="$router.back()">
+                    <v-icon icon="mdi-arrow-left" start />
+                    Atpakaļ
+                  </v-btn>
+                </div>
+              </v-col>
+
+              <v-col cols="12" md="5">
+                <div class="info">
+                  <div class="text-subtitle-1 font-weight-bold mb-2">Ātrā informācija</div>
+                  <div class="d-flex align-center ga-2 mb-2">
+                    <v-icon icon="mdi-map-marker" />
+                    <span>Rīga (demo)</span>
+                  </div>
+                  <div class="d-flex align-center ga-2 mb-2">
+                    <v-icon icon="mdi-cash" />
+                    <span>No 20€/h </span>
+                  </div>
+                  <div class="d-flex align-center ga-2 mb-2">
+                    <v-icon icon="mdi-clock-outline" />
+                    <span>Elastīgs grafiks</span>
+                  </div>
+
+                  <v-divider class="my-4" />
+
+                  <v-btn color="primary" variant="flat" class="btnWide" @click="$router.push('/treneri')">
+                    Skatīt citus trenerus
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <!-- Photo -->
+      <v-col cols="12" md="4">
+        <v-card class="photoCard" elevation="0">
+          <v-img :src="photoSrc" height="360" cover />
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- BOOKING DIALOG -->
+    <v-dialog v-model="bookingDialog" max-width="520">
+      <v-card class="rounded-xl">
+        <v-card-title class="font-weight-black">Rezervēt nodarbību</v-card-title>
+
+        <v-card-text class="pt-2">
+          <div class="text-body-2 mb-3" style="opacity:.75">
+            Izvēlies datumu un laiku. Pilnībā aizņemtas dienas nav izvēlamas. Rezervēt var tikai sākot no rītdienas.
           </div>
 
-          <!-- Foto (no Frontend/public/trainers/{id}.jpg) -->
-          <v-img
-            :src="photoSrc"
-            height="260"
-            cover
-            class="rounded-xl mt-6 mb-6"
-          />
-
-          <p class="text-body-1 muted">
-            {{ trainer.description }}
-          </p>
-
-          <div class="d-flex flex-wrap ga-3 mt-6">
-            <v-btn
-              color="primary"
-              size="large"
-              class="btn"
-              prepend-icon="mdi-message"
-              @click="contact"
-            >
-              Sazināties
-            </v-btn>
-
-            <v-btn
-              color="secondary"
-              variant="tonal"
-              size="large"
-              class="btn"
-              prepend-icon="mdi-calendar"
-              @click="openBooking"
-            >
-              Rezervēt nodarbību
-            </v-btn>
-
-            <v-btn
-              variant="text"
-              size="large"
-              prepend-icon="mdi-arrow-left"
-              @click="$router.push('/treneri')"
-            >
-              Atpakaļ
-            </v-btn>
-          </div>
-        </v-col>
-
-        <!-- Right -->
-        <v-col cols="12" md="4">
-          <v-card class="sideCard" elevation="0">
-            <h3 class="mb-4">Ātrā informācija</h3>
-
-            <div class="infoRow">
-              <v-icon icon="mdi-map-marker" />
-              <span>Rīga (demo)</span>
-            </div>
-
-            <div class="infoRow">
-              <v-icon icon="mdi-cash" />
-              <span>No 20€/h (demo)</span>
-            </div>
-
-            <div class="infoRow">
-              <v-icon icon="mdi-clock-outline" />
-              <span>Elastīgs grafiks (demo)</span>
-            </div>
-
-            <v-divider class="my-5" />
-
-            <v-btn
-              block
-              color="primary"
-              variant="flat"
-              class="btn"
-              @click="$router.push('/treneri')"
-            >
-              Skatīt citus trenerus
-            </v-btn>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-card>
-
-    <!-- Booking Dialog with calendar + busy times -->
-    <v-dialog v-model="bookingDialog" max-width="560">
-      <v-card style="border-radius: 18px;">
-        <v-card-title class="text-h6 font-weight-bold">
-          Rezervēt nodarbību
-        </v-card-title>
-
-        <v-card-text>
-          <v-text-field
-            v-model="form.name"
-            label="Tavs vārds"
-            variant="solo"
-            density="comfortable"
-          />
-          <v-text-field
-            v-model="form.email"
-            label="E-pasts"
-            variant="solo"
-            density="comfortable"
-          />
-
-          <div class="mt-2 mb-2" style="opacity:.75; font-size: 13px;">
-            Izvēlies datumu. Pilnībā aizņemtas dienas nav izvēlamas.
-          </div>
-
+          <!-- Date picker -->
           <v-date-picker
             v-model="form.date"
+            :min="minDate"
             :allowed-dates="allowedDates"
+            show-adjacent-months
             class="mb-4"
           />
 
+          <!-- Time select -->
           <v-select
             v-model="form.time"
             :items="timeOptions"
             label="Laiks"
             variant="solo"
             density="comfortable"
-            :disabled="!form.date"
-            :hint="form.date ? 'Izvēlies brīvu laiku' : 'Vispirms izvēlies datumu'"
-            persistent-hint
+            :disabled="!selectedDateStr || timeOptions.length === 0"
+            hide-details
           />
 
+          <div v-if="selectedDateStr && timeOptions.length === 0" class="text-caption mt-2" style="opacity:.7">
+            Šai dienai nav pieejamu laiku.
+          </div>
+
+          <!-- Busy times chips -->
           <div v-if="selectedDateStr && busyTimesForSelectedDay.length" class="mt-3">
-            <div style="opacity:.75; font-size: 13px; margin-bottom: 8px;">
-              Aizņemti laiki šajā dienā:
-            </div>
+            <div class="text-caption mb-1" style="opacity:.7">Aizņemti laiki šajā dienā:</div>
             <div class="d-flex flex-wrap ga-2">
               <v-chip
                 v-for="t in busyTimesForSelectedDay"
@@ -190,26 +158,22 @@
             </div>
           </div>
 
-          <v-textarea
-            v-model="form.message"
-            label="Ziņa (nav obligāti)"
-            variant="solo"
-            density="comfortable"
-            class="mt-4"
-          />
+          
+          
 
           <v-alert
             v-if="submitError"
             type="error"
             variant="tonal"
-            class="mt-3"
+            class="mt-4 rounded-xl"
             :text="submitError"
           />
+
           <v-alert
             v-if="submitOk"
             type="success"
             variant="tonal"
-            class="mt-3"
+            class="mt-4 rounded-xl"
             text="Rezervācija nosūtīta!"
           />
         </v-card-text>
@@ -221,7 +185,7 @@
             color="primary"
             variant="flat"
             :loading="submitting"
-            :disabled="!canSubmit"
+            :disabled="!canSubmit || submitting"
             @click="submitBooking"
           >
             Nosūtīt
@@ -233,13 +197,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import api from '../services/api'
 
 const route = useRoute()
+const router = useRouter()
 
-// Trainer
+/* ---------------------------
+   Trainer
+---------------------------- */
 const trainer = ref({ id: null, name: '', sport: '', description: '' })
 const loading = ref(true)
 const error = ref('')
@@ -252,106 +219,131 @@ const crumbs = computed(() => [
 
 const photoSrc = computed(() => `/trainers/${route.params.id}.jpg`)
 
-// Booking state
+/* ---------------------------
+   Booking dialog + UI state
+---------------------------- */
 const bookingDialog = ref(false)
 const submitting = ref(false)
 const submitError = ref('')
 const submitOk = ref(false)
 
-// Calendar busy data: [{id,date,time}]
+// Busy slots: [{id, date:'YYYY-MM-DD', time:'HH:MM:SS' or 'HH:MM'}]
 const busy = ref([])
 
-// Form
+/* ---------------------------
+   Form 
+---------------------------- */
 const form = ref({
-  name: '',
-  email: '',
   date: null,   // v-date-picker value
-  time: '',
+  time: '',     // 'HH:MM'
   message: '',
 })
 
-/** Convert v-date-picker value into YYYY-MM-DD */
-function dateStr(v) {
-  if (!v) return ''
-  if (typeof v === 'string') return v.slice(0, 10)
-  return new Date(v).toISOString().slice(0, 10)
+/* ---------------------------
+   Helpers
+---------------------------- */
+function pad(n) { return String(n).padStart(2, '0') }
+
+function dateStr(val) {
+  if (!val) return ''
+  if (typeof val === 'string') return val.slice(0, 10)
+
+  const d = new Date(val)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+function normalizeTime(t) {
+  if (!t) return ''
+  return t.length >= 5 ? t.slice(0, 5) : t
+}
+
+// rītdiena (min datums)
+function tomorrowStr() {
+  const d = new Date()
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() + 1)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+const minDate = computed(() => tomorrowStr())
+
+function isBeforeTomorrow(dStr) {
+  if (!dStr) return true
+  return dStr < minDate.value
 }
 
 const selectedDateStr = computed(() => dateStr(form.value.date))
 
-// Create time slots (09:00–19:00, every 60 minutes)
+/* ---------------------------
+   Time slots (09:00–19:00, every 60 minutes)
+---------------------------- */
 const allTimes = Array.from({ length: 11 }, (_, i) => {
   const h = 9 + i
   return `${String(h).padStart(2, '0')}:00`
 })
 
-// Busy times for selected date
 const busyTimesForSelectedDay = computed(() => {
   const d = selectedDateStr.value
   if (!d) return []
-
   const times = busy.value
     .filter(x => x.date === d)
-    .map(x => (x.time || '').slice(0, 5)) // HH:MM
-
-  // unique + sort
+    .map(x => normalizeTime(x.time))
   return Array.from(new Set(times)).sort()
 })
-// Available time options for selected date
+
 const timeOptions = computed(() => {
-  if (!selectedDateStr.value) return allTimes
+  const d = selectedDateStr.value
+  if (!d) return []
+  if (isBeforeTomorrow(d)) return []
   const busySet = new Set(busyTimesForSelectedDay.value)
   return allTimes.filter(t => !busySet.has(t))
 })
 
-// Disable fully-booked days (if allTimes are taken)
 const allowedDates = (val) => {
   const d = dateStr(val)
   if (!d) return true
+  if (isBeforeTomorrow(d)) return false
   const count = busy.value.filter(x => x.date === d).length
   return count < allTimes.length
 }
 
 const canSubmit = computed(() => {
-  return (
-    form.value.name.trim().length > 0 &&
-    form.value.email.trim().length > 0 &&
-    !!selectedDateStr.value &&
-    form.value.time.trim().length > 0
-  )
+  return !!selectedDateStr.value && form.value.time.trim().length > 0
 })
 
-onMounted(async () => {
+/* ---------------------------
+   Loads
+---------------------------- */
+async function loadTrainer() {
   loading.value = true
   error.value = ''
-
   try {
     const { data } = await api.get(`/treneri/${route.params.id}`)
     trainer.value = data
-  } catch (e) {
+  } catch {
     error.value = 'Pārbaudi, vai darbojas Laravel serveris un API maršruti.'
   } finally {
     loading.value = false
   }
-})
-
-function contact() {
-  alert('Demo: šeit būs saziņas forma vai čats.')
 }
 
 async function loadBusy() {
-  // Load busy slots for next 30 days
   const from = new Date()
   const to = new Date()
   to.setDate(to.getDate() + 30)
-
-  const fmt = (d) => d.toISOString().slice(0, 10)
+  const fmt = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 
   const { data } = await api.get(`/trainers/${route.params.id}/bookings`, {
     params: { from: fmt(from), to: fmt(to) },
   })
 
   busy.value = Array.isArray(data) ? data : []
+}
+
+/* ---------------------------
+   Actions
+---------------------------- */
+function contact() {
+  alert('Demo: šeit būs saziņas forma vai čats.')
 }
 
 async function openBooking() {
@@ -361,41 +353,75 @@ async function openBooking() {
 
   try {
     await loadBusy()
-  } catch (e) {
-    // If endpoint not added yet
+  } catch {
     submitError.value = 'Neizdevās ielādēt aizņemtos laikus. Pārbaudi API /trainers/{id}/bookings.'
   }
 }
 
 async function submitBooking() {
-  
   submitting.value = true
   submitError.value = ''
   submitOk.value = false
 
+  const d = selectedDateStr.value
+
+  if (!d) {
+    submitError.value = 'Izvēlies datumu.'
+    submitting.value = false
+    return
+  }
+
+  if (isBeforeTomorrow(d)) {
+    submitError.value = 'Rezervāciju var veikt tikai sākot no rītdienas.'
+    submitting.value = false
+    return
+  }
+
+  if (!form.value.time) {
+    submitError.value = 'Izvēlies laiku.'
+    submitting.value = false
+    return
+  }
+
+  if (busyTimesForSelectedDay.value.includes(form.value.time)) {
+    submitError.value = 'Šis laiks jau ir aizņemts.'
+    submitting.value = false
+    return
+  }
+
+  // Ņemam user datus no localStorage (tāds kā tu ielogojies)
+  const u = (() => {
+    try { return JSON.parse(localStorage.getItem('user') || 'null') }
+    catch { return null }
+  })()
+
   try {
     await api.post('/bookings', {
       trainer_id: Number(route.params.id),
-      client_name: form.value.name,
-      client_email: form.value.email,
-      date: selectedDateStr.value,
+      date: d,
       time: form.value.time,
-      message: form.value.message,
+      message: form.value.message || null,
+
+      // ja backend vēl prasa client_name/client_email
+      client_name: u?.name || 'Lietotājs',
+      client_email: u?.email || 'user@example.com',
     })
 
     submitOk.value = true
-
-    // refresh busy slots after booking
     await loadBusy()
-
-    // optional: clear message
     form.value.message = ''
   } catch (e) {
-    submitError.value = 'Neizdevās nosūtīt rezervāciju. Pārbaudi ievadītos datus.'
+    submitError.value =
+      e?.response?.data?.message ||
+      'Neizdevās nosūtīt rezervāciju. Pārbaudi ievadītos datus.'
   } finally {
     submitting.value = false
   }
 }
+
+onMounted(async () => {
+  await loadTrainer()
+})
 </script>
 
 <style scoped>
@@ -411,37 +437,34 @@ async function submitBooking() {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--v-theme-primary) 24%, transparent), transparent 45%),
-    radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--v-theme-secondary) 18%, transparent), transparent 45%),
-    radial-gradient(circle at 50% 90%, color-mix(in srgb, var(--v-theme-accent) 14%, transparent), transparent 55%);
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--v-theme-primary) 40%, transparent), transparent 55%),
+    radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--v-theme-secondary) 35%, transparent), transparent 55%),
+    radial-gradient(circle at 50% 90%, color-mix(in srgb, var(--v-theme-tertiary) 25%, transparent), transparent 60%);
   opacity: 0.9;
+  pointer-events: none;
 }
 
-.shadow {
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
-}
-
-.sideCard {
-  border-radius: 22px;
-  padding: 20px;
-  background: color-mix(in srgb, var(--v-theme-surface) 86%, transparent);
+.info {
+  padding: 18px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--v-theme-surface) 92%, transparent);
   border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 10%, transparent);
 }
 
-.infoRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  opacity: 0.85;
-  margin-bottom: 10px;
+.photoCard {
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 10%, transparent);
 }
 
 .btn {
-  border-radius: 16px;
-  font-weight: 900;
+  border-radius: 14px;
+  font-weight: 800;
 }
 
-.muted {
-  opacity: 0.85;
+.btnWide {
+  width: 100%;
+  border-radius: 14px;
+  font-weight: 900;
 }
 </style>

@@ -63,7 +63,6 @@
 .homePage .subtitle {
   font-size: 18px;
   max-width: 640px;
-  opacity: 0.9;
 }
 
 /* SEARCH */
@@ -124,13 +123,10 @@
 }
 
 .homePage .statLbl {
-  opacity: 0.75;
   font-size: 13px;
 }
 
-.homePage .muted {
-  opacity: 0.75;
-}
+
 
 /* GLASS CARD */
 .homePage .glass {
@@ -156,7 +152,6 @@
   height: 280px;
   border-radius: 50%;
   filter: blur(30px);
-  opacity: 0.55;
   z-index: 1;
 }
 
@@ -258,7 +253,6 @@
     radial-gradient(900px 350px at 10% 30%, rgba(109,40,217,0.35), transparent 55%),
     radial-gradient(900px 350px at 90% 50%, rgba(34,211,238,0.28), transparent 55%),
     radial-gradient(900px 350px at 50% 80%, rgba(251,146,60,0.22), transparent 60%);
-  opacity: 0.95;
 }
 
 .homePage .finalInner {
@@ -277,7 +271,92 @@
   font-weight: 950;
   margin: 0 0 6px;
 }
+/* ===== DARK MODE (Vuetify): class is on .v-application ===== */
+.v-application.v-theme--dark .homePage {
+  background: #0b0f1a !important;
+}
 
+/* noņem light hero background, ja tāds ir */
+.v-application.v-theme--dark .homePage .hero {
+  background: transparent !important;
+}
+
+/* galvenais gradients uz .fluid (tavs v-container fluid) */
+.v-application.v-theme--dark .homePage .fluid {
+  background:
+    radial-gradient(circle at 15% 25%, rgba(124, 77, 255, 0.22), transparent 55%),
+    radial-gradient(circle at 85% 25%, rgba(0, 188, 212, 0.16), transparent 55%),
+    radial-gradient(circle at 35% 85%, rgba(255, 167, 38, 0.10), transparent 60%),
+    linear-gradient(180deg, #070a12 0%, #0b1020 60%, #0b0f1a 100%) !important;
+}
+
+/* teksts */
+.v-application.v-theme--dark .homePage .title {
+  color: rgba(255, 255, 255, 0.92) !important;
+  opacity: 1 !important;
+}
+
+.v-application.v-theme--dark .homePage .subtitle,
+.v-application.v-theme--dark .homePage .muted {
+  color: rgba(255, 255, 255, 0.72) !important;
+  opacity: 1 !important;
+}
+
+/* gradient teksts */
+.v-application.v-theme--dark .homePage .grad {
+  background: linear-gradient(90deg, #7c4dff, #00bcd4, #66bb6a) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* badge */
+.v-application.v-theme--dark .homePage .badge {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* glass */
+.v-application.v-theme--dark .homePage .glass {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.55) !important;
+}
+
+.v-application.v-theme--dark .homePage .miniItem {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+/* search input (solo) */
+.v-application.v-theme--dark .homePage .searchWrap .v-field {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.v-application.v-theme--dark .homePage .searchWrap .v-field input {
+  color: rgba(255, 255, 255, 0.90) !important;
+}
+
+.v-application.v-theme--dark .homePage .searchWrap .v-field .v-label {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* drošībai: ja kaut kur ir overlay */
+.v-application.v-theme--dark .homePage .hero::before,
+.v-application.v-theme--dark .homePage .hero::after {
+  opacity: 0 !important;
+}
+
+.v-application.v-theme--dark .homePage .content,
+.v-application.v-theme--dark .homePage .heroRow,
+.v-application.v-theme--dark .homePage .fluid {
+  opacity: 1 !important;
+  filter: none !important;
+}
 /* RESPONSIVE */
 @media (max-width: 960px) {
   .homePage .heroRow {
@@ -296,4 +375,5 @@
     width: 100%;
     height: 48px;
   }
+
 }

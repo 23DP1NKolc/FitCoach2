@@ -16,49 +16,25 @@
               </h1>
 
               <p class="subtitle">
-                Izvēlies sporta veidu, apskati trenera profilu un sāc trenēties. 
+                Izvēlies sporta veidu, apskati trenera profilu un sāc trenēties.
               </p>
 
-              <div class="searchWrap mt-7">
-                <v-text-field
-                  v-model="q"
-                  label="Meklēt treneri vai sporta veidu"
-                  variant="solo"
-                  density="comfortable"
-                  hide-details
-                  prepend-inner-icon="mdi-magnify"
-                />
-                <v-btn color="primary" size="large" class="searchBtn" @click="$router.push('/treneri')">
-                  Meklēt
-                </v-btn>
-              </div>
-
-              <div class="chips mt-5">
-                <v-chip
-                  v-for="c in categories"
-                  :key="c"
-                  color="secondary"
-                  variant="tonal"
-                  class="mr-2 mb-2"
-                  @click="$router.push('/treneri')"
-                >
-                  {{ c }}
-                </v-chip>
-              </div>
-
               <div class="cta mt-6 d-flex flex-wrap ga-3">
-                <v-btn color="primary" size="x-large" class="btn" @click="$router.push('/treneri')">
+                <v-btn color="primary" size="x-large" class="btn" @click="goTrainers()">
                   Skatīt trenerus
                   <v-icon icon="mdi-arrow-right" end />
                 </v-btn>
+
+                
+
+                
+                
 
                 <v-btn color="secondary" variant="tonal" size="x-large" class="btn" @click="scrollTo('how')">
                   Kā tas strādā
                   <v-icon icon="mdi-play-circle" end />
                 </v-btn>
               </div>
-
-             
             </v-col>
 
             <v-col cols="12" md="5" class="d-flex justify-center">
@@ -93,12 +69,14 @@
                   <v-divider class="my-5" />
 
                   <div class="d-flex ga-3">
-                    <v-btn color="primary" variant="flat" class="btnSmall" @click="$router.push('/treneri')">
+                    <v-btn color="primary" variant="flat" class="btnSmall" @click="goTrainers()">
                       Atvērt sarakstu
                     </v-btn>
-                    <v-btn color="accent" variant="tonal" class="btnSmall" @click="$router.push('/treneri/1')">
-                      Profila piemērs
-                    </v-btn>
+                    
+                  </div>
+
+                  <div v-if="!isLoggedIn" class="text-caption mt-4" style="opacity:.7">
+                    Lai skatītu trenerus, nepieciešams ielogoties.
                   </div>
                 </div>
               </div>
@@ -136,7 +114,7 @@
               <h2 class="finalTitle">Gatavs sākt?</h2>
               <p class="muted mb-0">Atver treneru sarakstu un izvēlies sev piemērotāko.</p>
             </div>
-            <v-btn color="primary" size="x-large" class="btn" @click="$router.push('/treneri')">
+            <v-btn color="primary" size="x-large" class="btn" @click="goTrainers()">
               Sākt tagad
               <v-icon icon="mdi-arrow-right" end />
             </v-btn>
@@ -148,10 +126,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { isLoggedIn } from '../services/auth'
 import '../assets/home.css'
 
-const q = ref('')
+const router = useRouter()
+
 const categories = ['Fitness', 'Joga', 'Dejas', 'Kardio', 'Pilates']
 
 const topDemo = [
@@ -165,6 +146,22 @@ const features = [
   { title: 'Apskati profilu', text: 'Skaties aprakstu un galveno informāciju.', icon: 'mdi-account-box' },
   { title: 'Sazinies', text: 'Sāc saziņu un rezervē nodarbību (nākotnē).', icon: 'mdi-message' },
 ]
+
+function goTrainers() {
+  if (!isLoggedIn.value) {
+    router.push({ path: '/login', query: { redirect: '/treneri' } })
+    return
+  }
+  router.push('/treneri')
+}
+
+function goSport(name) {
+  if (!isLoggedIn.value) {
+    router.push({ path: '/login', query: { redirect: `/treneri?q=${encodeURIComponent(name)}` } })
+    return
+  }
+  router.push({ path: '/treneri', query: { q: name } })
+}
 
 function scrollTo(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
